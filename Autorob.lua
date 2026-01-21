@@ -1,36 +1,15 @@
--- Jailbreak Auto Rob - Ready for loadstring (Delta Executor)
+-- Jailbreak Auto Rob - Delta Mobile (No UI)
 
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
-if game.PlaceId ~= 606849621 then
-    warn("Script apenas para Jailbreak.")
-    return
-end
+if game.PlaceId ~= 606849621 then return end
 
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local LocalPlayer = Players.LocalPlayer
 
--- UI Library
-local Rayfield = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/shlexware/Rayfield/main/source.lua"
-))()
-
-local Window = Rayfield:CreateWindow({
-    Name = "Jailbreak Auto Rob",
-    LoadingTitle = "Auto Rob",
-    LoadingSubtitle = "Delta Executor",
-    ConfigurationSaving = {
-        Enabled = false
-    },
-    KeySystem = false
-})
-
-local FarmTab = Window:CreateTab("Farm", 4483362458)
-
--- Character
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
@@ -40,14 +19,9 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 local function SafeTP(cf)
-    if HumanoidRootPart then
-        HumanoidRootPart.Velocity = Vector3.zero
-        HumanoidRootPart.CFrame = cf
-    end
+    HumanoidRootPart.Velocity = Vector3.zero
+    HumanoidRootPart.CFrame = cf
 end
-
--- Auto Rob
-local AutoRob = false
 
 local Robberies = {
     {
@@ -73,41 +47,18 @@ local Robberies = {
     }
 }
 
-local function RunAutoRob()
-    task.spawn(function()
-        while AutoRob do
-            for _, rob in ipairs(Robberies) do
-                if not AutoRob then break end
-                pcall(function()
-                    if rob.Check() then
-                        Rayfield:Notify({
-                            Title = "Auto Rob",
-                            Content = "Roubando: "..rob.Name,
-                            Duration = 2
-                        })
-                        SafeTP(rob.CFrame)
-                        task.wait(5)
-                    end
-                end)
-            end
-            task.wait(2)
+task.spawn(function()
+    while true do
+        for _, rob in ipairs(Robberies) do
+            pcall(function()
+                if rob.Check() then
+                    SafeTP(rob.CFrame)
+                    task.wait(6)
+                end
+            end)
         end
-    end)
-end
-
-FarmTab:CreateToggle({
-    Name = "Auto Rob",
-    CurrentValue = false,
-    Callback = function(v)
-        AutoRob = v
-        if v then
-            RunAutoRob()
-        end
+        task.wait(3)
     end
-})
+end)
 
-Rayfield:Notify({
-    Title = "Auto Rob",
-    Content = "Carregado com sucesso!",
-    Duration = 4
-})
+warn("AUTO ROB ATIVO")
