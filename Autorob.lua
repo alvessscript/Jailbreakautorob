@@ -1,10 +1,11 @@
--- Universal Jailbreak Hub - Auto Rob (Delta Executor)
+-- Jailbreak Auto Rob - Ready for loadstring (Delta Executor)
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
 if game.PlaceId ~= 606849621 then
-    warn("Este script funciona apenas no Jailbreak.")
+    warn("Script apenas para Jailbreak.")
     return
 end
 
@@ -18,20 +19,18 @@ local Rayfield = loadstring(game:HttpGet(
 ))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Universal Jailbreak Hub",
+    Name = "Jailbreak Auto Rob",
     LoadingTitle = "Auto Rob",
     LoadingSubtitle = "Delta Executor",
     ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "UniversalJB",
-        FileName = "AutoRob"
+        Enabled = false
     },
     KeySystem = false
 })
 
 local FarmTab = Window:CreateTab("Farm", 4483362458)
 
--- Character handling
+-- Character
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
@@ -40,10 +39,10 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
 end)
 
-local function SafeTP(cframe)
+local function SafeTP(cf)
     if HumanoidRootPart then
         HumanoidRootPart.Velocity = Vector3.zero
-        HumanoidRootPart.CFrame = cframe
+        HumanoidRootPart.CFrame = cf
     end
 end
 
@@ -53,44 +52,44 @@ local AutoRob = false
 local Robberies = {
     {
         Name = "Bank",
-        OpenCheck = function()
+        Check = function()
             return Workspace.Banks:GetChildren()[1].Open.Value
         end,
-        Position = CFrame.new(10, 20, 800)
+        CFrame = CFrame.new(10, 20, 800)
     },
     {
         Name = "Jewelry",
-        OpenCheck = function()
+        Check = function()
             return Workspace.Jewelrys:GetChildren()[1].Open.Value
         end,
-        Position = CFrame.new(130, 20, 1300)
+        CFrame = CFrame.new(130, 20, 1300)
     },
     {
         Name = "Museum",
-        OpenCheck = function()
+        Check = function()
             return Workspace.Museum.Open.Value
         end,
-        Position = CFrame.new(1100, 120, 1300)
+        CFrame = CFrame.new(1100, 120, 1300)
     }
 }
 
-local function StartAutoRob()
+local function RunAutoRob()
     task.spawn(function()
         while AutoRob do
-            pcall(function()
-                for _, rob in pairs(Robberies) do
-                    if not AutoRob then break end
-                    if rob.OpenCheck() then
+            for _, rob in ipairs(Robberies) do
+                if not AutoRob then break end
+                pcall(function()
+                    if rob.Check() then
                         Rayfield:Notify({
                             Title = "Auto Rob",
                             Content = "Roubando: "..rob.Name,
                             Duration = 2
                         })
-                        SafeTP(rob.Position)
+                        SafeTP(rob.CFrame)
                         task.wait(5)
                     end
-                end
-            end)
+                end)
+            end
             task.wait(2)
         end
     end)
@@ -99,16 +98,16 @@ end
 FarmTab:CreateToggle({
     Name = "Auto Rob",
     CurrentValue = false,
-    Callback = function(Value)
-        AutoRob = Value
-        if Value then
-            StartAutoRob()
+    Callback = function(v)
+        AutoRob = v
+        if v then
+            RunAutoRob()
         end
     end
 })
 
 Rayfield:Notify({
-    Title = "Universal Jailbreak Hub",
-    Content = "Auto Rob carregado!",
-    Duration = 5
+    Title = "Auto Rob",
+    Content = "Carregado com sucesso!",
+    Duration = 4
 })
