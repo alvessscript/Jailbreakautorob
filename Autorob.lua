@@ -1,4 +1,3 @@
-
 -- Universal Jailbreak Hub - Auto Rob (Delta Executor)
 if not game:IsLoaded() then
     game.Loaded:Wait()
